@@ -1,17 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { addToDb } from '../../utilities/fakedb';
+import { addToDb, getStoredCart } from '../../utilities/fakedb';
 import Cart from '../Cart/Cart';
+import useProducts from '../hooks/useProducts';
 import Products from '../Products/Products';
 import './Shop.css'
 
 const Shop = () => {
-    const [products, setProducts] = useState([])
+    const [products, setProducts] = useProducts()
     const [cart, setCart]= useState([])
     useEffect( () => {
         fetch('products.json')
         .then(res => res.json())
         .then(data=> setProducts(data))
     } , [])
+
+    useEffect(() => {
+        console.log('Local storage first line', products)
+        const storedCart = getStoredCart()
+        // console.log(storedCart)
+        const savedCart = []
+        for(const id in storedCart){
+            // console.log(id)
+            const addedProduct = products.find(product => product.id === id)
+            if(addedProduct){
+                const quantity = storedCart[id]
+                addedProduct.quantity = quantity;
+                savedCart.push(addedProduct)
+            }   
+        }
+        setCart(savedCart)
+    },[products ])
 
 const handlerAddToCart = (product) =>{
     // console.log(product)
