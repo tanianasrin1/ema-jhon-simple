@@ -42,4 +42,10 @@
     border: none;
     font-size: 24px;
     border-radius: 5px;
+    cursor: pointer;
+}
+
+.form-link{
+    color: rgba(255, 153, 0, 1);
+    text-decoration: none;
 }
