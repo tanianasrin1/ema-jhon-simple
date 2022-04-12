@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import auth from '../../firebase.init';
 
 
 const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+
+    const [createUserWithEmailAndPassword, user] = useCreateUserWithEmailAndPassword(auth)
+
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleEmailBlur = event =>{
         setEmail(event.target.value)
@@ -19,6 +25,10 @@ const SignUp = () => {
     const handleConfirmPasswordBlur = event =>{
         setConfirmPassword(event.target.value)
     }
+
+    if(user){
+        navigate('/') ; 
+    }
    
     const handleCreateUser = event =>{
         event.preventDefault()
@@ -26,6 +36,11 @@ const SignUp = () => {
             setError('you two password not match')
             return;
         }
+        if(password.length < 6){
+            setError('password must be 6 character')
+            return;
+        }
+        createUserWithEmailAndPassword(email, password);
     }
     
 
@@ -33,7 +48,7 @@ const SignUp = () => {
         <div className="form-container">
         <div>
           <h2 className="form-title">SignUP</h2>
-          <form>
+          <form onSubmit={handleCreateUser}>
              <div className="input-group">
                  <label htmlFor="email"> Email</label>
                  <input onBlur={handleEmailBlur} type="email" name="email" id="" required />
